@@ -1,0 +1,34 @@
+/* 
+Create logging table PROVISION_JOB_LOG
+Create view to flatten the PROVISION_JOB_LOG
+*/
+
+USE ROLE SYSADMIN;
+USE SCHEMA PLATFORM_DB.PROVISION_APP; 
+CREATE OR REPLACE   SEQUENCE PLATFORM_DB.PROVISION_APP.PROVISION_JOB_LOG_SEQ start = 1 increment = 1;
+                            
+  CREATE OR REPLACE    TABLE PLATFORM_DB.PROVISION_APP.PROVISION_JOB_LOG (
+	JOB_LOG_ID NUMBER(38,0) DEFAULT PLATFORM_DB.PROVISION_APP.PROVISION_JOB_LOG_SEQ.NEXTVAL COMMENT 'SYSTEM GENERATED SEQUENCE',
+	JOB_DETAILS VARIANT NOT NULL COMMENT 'JSON OBJECT',
+	JOB_COMPLETED_TS TIMESTAMP_NTZ(9) NOT NULL DEFAULT CURRENT_TIMESTAMP() COMMENT 'TIMESTAMP ASSOCIATED WITH JOB EXECUTION'
+);
+
+create or replace view PLATFORM_DB.PROVISION.PROVISION_JOB_LOG_VW
+as
+select
+DISTINCT
+job_log_id,
+job_completed_ts,
+job_details:tenant::VARCHAR TENANT,
+job_details:action::VARCHAR  job_action,
+case when job_details:is_error::INTEGER = 1 then 'ERROR' else 'SUCCESS' end  job_status,
+job_details:job_log_description::VARCHAR  job_log_description,
+job_details:job_name::VARCHAR  job_name
+from
+PLATFORM_DB.PROVISION_APP.PROVISION_JOB_LOG, lateral flatten( input => job_details );
+select * from PLATFORM_DB.PROVISION.PROVISION_JOB_LOG_VW order by job_log_id desc LIMIT 20;
+
+
+
+
+

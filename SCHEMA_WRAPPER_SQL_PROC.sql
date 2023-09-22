@@ -292,7 +292,17 @@ BEGIN
                 CLOSE GRANTS; 
                 
                 LET BU_TARGET_ROLE_NAME VARCHAR := P_DATABASE_NAME || '_ALL'|| ROLENAME_TYPE;
-                LET BU_READ_ROLE_SQL VARCHAR := 'GRANT ROLE ' || ROLE_NAME || ' TO ROLE ' ||  BU_TARGET_ROLE_NAME;    
+                LET BU_READ_ROLE_SQL VARCHAR := 'GRANT ROLE ' || ROLE_NAME || ' TO ROLE ' ||  BU_TARGET_ROLE_NAME;   
+                
+                LOG := (CALL PLATFORM_DB.PROVISION_ROUTINE.CREATE_ROLE_SQL_PROC(:BU_TARGET_ROLE_NAME, :TENANT));                    
+                LOG_AGG := LOG_AGG || LOG[1] || '\n';                    
+                IF(LOG[0] = '1') THEN
+                    IS_ERROR := '1';
+                    RAISE WRAPPER_EXCEPTION;
+                END IF;
+                
+                SP_RETURN_LOG := SP_RETURN_LOG || ' ROLE CREATED : ' || BU_TARGET_ROLE_NAME || ', ';
+ 
                 LOG := (CALL PLATFORM_DB.PROVISION_ROUTINE.GRANT_ROLE_SQL_PROC(:BU_READ_ROLE_SQL));
                 LOG_AGG := LOG_AGG || LOG[1] || '\n';
                 IF(LOG[0] = '1') THEN

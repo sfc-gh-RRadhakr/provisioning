@@ -143,3 +143,16 @@ CALL PLATFORM_DB.PROVISION_ROUTINE.WAREHOUSE_WRAPPER(
     P_STATEMENT_QUEUED_TIMEOUT_IN_SECONDS  => '7200',
     P_TENANT_NAME => $tenant_name
 );
+
+
+/*
+Create functional role 
+*/
+set tenant_name = 'KP_WIS'; 
+CALL PLATFORM_DB.PROVISION_ROUTINE.ROLE_WRAPPER ( 
+  P_ACTION => 'CREATE',
+  P_ROLE_NAME => 'KP_WIS_ANALYST_ROLE_FR',
+  P_ROLE_COMMENT => ' Functional role for Analyst',
+  P_USER_COMMENT =>' Can have access to multiple roles',
+  P_TENANT_NAME => $tenant_name
+);

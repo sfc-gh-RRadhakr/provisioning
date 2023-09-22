@@ -149,61 +149,7 @@ BEGIN
         END FOR;
     CLOSE DB_ROLE_LIST;
 
-    /* 
-    --------------------------------------------------  Convert into metadata driven ------------------------------------------------------------ 
-    --  ALL  READ ROLE
-    LET BU_TARGET_ROLE_NAME_ALL_READ_ROLE VARCHAR := P_DB_NAME || '_ALL_READ_ROLE';
-    LET BU_USAGE_SQL VARCHAR := 'GRANT USAGE ON DATABASE ' || P_DB_NAME || ' TO ROLE ' ||  BU_TARGET_ROLE_NAME_ALL_READ_ROLE;
-                    
-    LOG := (CALL PLATFORM_DB.PROVISION_ROUTINE.CREATE_ROLE_SQL_PROC(:BU_TARGET_ROLE_NAME_ALL_READ_ROLE, :TENANT));
-                    
-    LOG_AGG := LOG_AGG || LOG[1] || '\n';
-                    
-    IF(LOG[0] = '1') THEN
-        IS_ERROR := '1';
-        RAISE WRAPPER_EXCEPTION;
-    END IF;
-    SP_RETURN_LOG := SP_RETURN_LOG || ' ROLE CREATED : ' || BU_TARGET_ROLE_NAME_ALL_READ_ROLE || ', ';
-
-    -- ALL_DML_ROLE
-    LET BU_TARGET_ROLE_NAME_ALL_DML_ROLE VARCHAR := P_DB_NAME || '_ALL_DML_ROLE';
-    BU_USAGE_SQL  := 'GRANT USAGE ON DATABASE ' || P_DB_NAME || ' TO ROLE ' ||  BU_TARGET_ROLE_NAME_ALL_DML_ROLE;
-                    
-    LOG := (CALL PLATFORM_DB.PROVISION_ROUTINE.CREATE_ROLE_SQL_PROC(:BU_TARGET_ROLE_NAME_ALL_DML_ROLE, :TENANT));
-                    
-    LOG_AGG := LOG_AGG || LOG[1] || '\n';
-                    
-    IF(LOG[0] = '1') THEN
-        IS_ERROR := '1';
-        RAISE WRAPPER_EXCEPTION;
-    END IF;
-    SP_RETURN_LOG := SP_RETURN_LOG || ' ROLE CREATED : ' || BU_TARGET_ROLE_NAME_ALL_DML_ROLE || ', ';
-
-    -- ALL_MAIN_ROLE
-    LET BU_TARGET_ROLE_NAME_ALL_MAIN_ROLE VARCHAR := P_DB_NAME || '_ALL_MAIN_ROLE';
-    BU_USAGE_SQL  := 'GRANT USAGE ON DATABASE ' || P_DB_NAME || ' TO ROLE ' ||  BU_TARGET_ROLE_NAME_ALL_MAIN_ROLE;
-                    
-    LOG := (CALL PLATFORM_DB.PROVISION_ROUTINE.CREATE_ROLE_SQL_PROC(:BU_TARGET_ROLE_NAME_ALL_MAIN_ROLE, :TENANT));
-                    
-    LOG_AGG := LOG_AGG || LOG[1] || '\n';
-                    
-    IF(LOG[0] = '1') THEN
-        IS_ERROR := '1';
-        RAISE WRAPPER_EXCEPTION;
-    END IF;
-
-    SP_RETURN_LOG := SP_RETURN_LOG || ' ROLE CREATED : ' || BU_TARGET_ROLE_NAME_ALL_MAIN_ROLE || ', ';
-
-
-    LOG := (CALL PLATFORM_DB.PROVISION_ROUTINE.GRANT_ROLE_SQL_PROC(:BU_USAGE_SQL));
-    LOG_AGG := LOG_AGG || LOG[1] || '\n';
-                    
-    IF(LOG[0] = '1') THEN
-        IS_ERROR := '1';
-        RAISE WRAPPER_EXCEPTION;
-    END IF;
-    --------------------------------------------------  Convert into metadata driven ------------------------------------------------------------ 
-    */
+     
     -- ALTER Database
     ELSEIF (JOB_ACTION = 'ALTER' AND PERMISSION_EXISTS = 1) THEN
       LOG :=  (CALL PLATFORM_DB.PROVISION_ROUTINE.ALTER_DATABASE_SQL_PROC(:P_DB_NAME,:P_DB_COMMENT,:P_USER_COMMENT,:P_DATA_RETENTION_TIME_IN_DAYS,:TENANT));

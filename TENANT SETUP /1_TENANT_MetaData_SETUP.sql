@@ -1,18 +1,21 @@
 /*
 Database as PRODUCT :
-KP_WIS —>   DATABSE /TENANT
-    STAGE   — > Schema 
+KP_WIS —>   DATABSE /TENANT   - ALL
+    STAGE   — > Schema   
     ENRICHED — > Schema 
     CURATED  — > Schema 
+    CORE --> schema 
 
 Schema  as PRODUCT :
 
 CIDE_BOM  -->TENANT
     CIDE_BOM_STAGE_DB   -->  Database 
-        -- SCHEMAS
+        -- SCHEMAS     
     CIDE_BOM_ENRICHED_DB -->  Database 
         -- SCHEMAS
-    CIDE_BOMCURATED _DB  -->  Database 
+    CIDE_BOM_CURATED _DB  -->  Database 
+        -- SCHEMAS
+    CIDE_BOM_CORE_DB  -->  Database 
         -- SCHEMAS
 
 */
@@ -82,11 +85,11 @@ WITH DatabaseType_list as (
 Schema_Type_list as ( SELECT SCHEMA_TYPEID FROM PLATFORM_DB.PROVISION_APP.Schema_Type
                      WHERE SchemaTypeName= $V_SchemaTypeName
                     AND TENANT_ID = $V_TENANT_ID)
-SELECT DATABASETYPEID,SCHEMA_TYPEID,'_MAIN_ROLE', $V_TENANT_ID  FROM DatabaseType_list,Schema_Type_list
+SELECT DATABASETYPEID,SCHEMA_TYPEID,'_FULL_ROLE', $V_TENANT_ID  FROM DatabaseType_list,Schema_Type_list
 UNION
-SELECT DATABASETYPEID,SCHEMA_TYPEID,'_DML_ROLE', $V_TENANT_ID  FROM DatabaseType_list,Schema_Type_list
+SELECT DATABASETYPEID,SCHEMA_TYPEID,'_RW_ROLE', $V_TENANT_ID  FROM DatabaseType_list,Schema_Type_list
 UNION
-SELECT DATABASETYPEID,SCHEMA_TYPEID,'_READ_ROLE', $V_TENANT_ID  FROM DatabaseType_list,Schema_Type_list;
+SELECT DATABASETYPEID,SCHEMA_TYPEID,'_RO_ROLE', $V_TENANT_ID  FROM DatabaseType_list,Schema_Type_list;
 
 /* *** Building out Privileges_matrix  *****
 Seed data must be populated in the steps {4_Provisioning.sql}
